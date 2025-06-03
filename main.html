@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>zainstation</title>
+  <style>
+    /* --- Visibility helpers for the top nav --- */
+    .top-nav { display: none; }
+    .top-nav.show { display: flex !important; }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body { background: white; font-family: Calibri, sans-serif; overflow: hidden; }
+
+    /* --- Intro screen --- */
+    .intro-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; transition: opacity 0.5s ease; }
+    .intro-screen.hidden { opacity: 0; pointer-events: none; }
+    .intro-screen h1 { font-size: 2rem; margin-bottom: 1rem; }
+    .intro-screen p { font-size: 1rem; color: gray; cursor: pointer; }
+
+    /* Keep the horizontal scrollbar at the very bottom */
+    .scroll-wrapper { width: 100vw; height: 100vh; display: flex; align-items: flex-start; overflow-x: auto; overflow-y: hidden; scroll-behavior: auto; padding-top: 150px; }
+
+    .content { display: flex; flex-direction: column; gap: 4rem; padding: 0 1rem 2rem 1rem; width: max-content; }
+
+    /* Row of boxes */
+    .container { display: flex; gap: 2rem; align-items: center; }
+
+    .box { width: 250px; height: 250px; background: white; border: 3px solid #ccc; border-radius: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.05); transition: transform 0.25s ease, box-shadow 0.25s ease, outline 0.25s ease; cursor: pointer; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; font-size: 2rem; transform-origin: center; }
+    .box span { font-size: 1rem; color: #333; opacity: 0; transition: opacity 0.25s ease; position: absolute; bottom: -2.5rem; text-transform: lowercase; }
+
+    /* Enlarge proportionally on hover/focus/active; spacing stays due to flex gap */
+    .box:hover { transform: scale(1.35); box-shadow: 0 20px 40px rgba(0,0,0,0.15); outline: 4px solid #66b3ff; z-index: 2; }
+    .box.focused { outline: 4px solid #66b3ff; outline-offset: -3px; transform: scale(1.35); z-index: 2; }
+    .box.focused span { opacity: 1; }
+    .box.active { transform: scale(1.35) !important; z-index: 5 !important; }
+
+    Heatmap card
+    .rectangle { width: 550px; height: 100px; background: white; border: 2px solid #ccc; border-radius: 15px; display: flex; justify-content: center; align-items: center; margin: 2rem auto 0 auto; }
+    .heatmap { display: grid; grid-template-columns: repeat(53, 8px); grid-gap: 2px; justify-content: center; }
+    .heatmap div { width: 8px; height: 8px; border-radius: 2px; }
+
+    .box.expanded {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1) !important;
+  width: 80vw;
+  height: 80vh;
+  border-radius: 20px;
+  background: white;
+  z-index: 999;
+  box-shadow: 0 0 40px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+}
+
+.box.focused{
+    body, html {
+  overflow: hidden
+}
+}
+
+  </style>
+</head>
+<body>
+  <!-- Optional background audio (replace src with your MP3). Plays on beginSite click -->
+  <audio id="bgAudio" loop>
+    <source src="" type="audio/mpeg">
+  </audio>
+
+  <!-- Top navigation -->
+  <div class="top-nav" id="top-nav" style="width: 100vw; position: fixed; top: 0; left: 0; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: white; z-index: 20; border-bottom: 1px solid #ccc; font-family: Calibri, sans-serif;">
+    <div style="display: flex; gap: 1.5rem; font-size: 1rem;">
+      <span style="color: #0070f3; font-weight: bold; border-bottom: 2px solid #0070f3; padding-bottom: 2px;">games</span>
+      <span style="color: #999;">media</span>
+    </div>
+    <div style="display: flex; gap: 1.5rem; font-size: 1rem; align-items: center;">
+      <span title="Search">🔍</span>
+      <span title="Settings">⚙️</span>
+      <span title="Profile">🤖</span>
+      <span id="clock"></span>
+    </div>
+  </div>
+
+  <!-- Intro overlay -->
+  <div class="intro-screen" id="intro">
+    <h1>welcome back</h1>
+    <p id="startBtn">tap to use controller</p>
+  </div>
+
+  <!-- Horizontal scroller -->
+  <div class="scroll-wrapper" id="scroll-wrapper">
+    <div class="content">
+      <div class="container" id="box-container">
+        <div style="width: 450px; flex-shrink: 0;"></div>
+        <div class="box"><span>about me</span></div>
+        <div class="box"><span>experience</span></div>
+        <div class="box"><span>projects</span></div>
+        <div class="box"><span>connect</span></div>
+        <div class="box"><span>music</span></div>
+        <div style="width: 450px; flex-shrink: 0;"></div>
+      </div>
+      <div class="rectangle" style="margin-top: 4rem;">
+        <div class="heatmap" id="heatmap"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Elements
+    const startBtn = document.getElementById('startBtn');
+    const scrollWrapper = document.getElementById('scroll-wrapper');
+    const boxes = document.querySelectorAll('.box');
+    let activeBox = null;
+
+    // Start app
+    startBtn.addEventListener('click', beginSite);
+
+    function beginSite() {
+      document.getElementById('intro').classList.add('hidden');
+      document.getElementById('top-nav').classList.add('show');
+
+      // optional audio
+      const audio = document.getElementById('bgAudio');
+      if (audio && audio.src) {
+        audio.play().catch(() => {});
+      }
+
+      const first = boxes[0];
+      if (first) {
+        scrollWrapper.scrollLeft = first.offsetLeft - (scrollWrapper.clientWidth - first.clientWidth) / 2;
+        updateFocusedBox();
+        first.classList.add('focused');
+      }
+    }
+
+    function activateBox(element) {
+      boxes.forEach(b => b.classList.remove('active', 'focused'));
+      const targetLeft = element.offsetLeft - (scrollWrapper.clientWidth - element.clientWidth) / 2;
+      scrollWrapper.scrollTo({ left: targetLeft, behavior: 'smooth' });
+      element.classList.add('active', 'focused');
+      activeBox = element;
+    }
+
+    // wheel -> horizontal scroll
+    scrollWrapper.addEventListener('wheel', (e) => {
+      if (e.deltaY !== 0 || e.deltaX !== 0) {
+        scrollWrapper.scrollLeft += (e.deltaY + e.deltaX) * 4;
+        e.preventDefault();
+        if (activeBox) {
+          activeBox.classList.remove('active');
+          activeBox = null;
+        }
+      }
+    }, { passive: false });
+
+    // click to activate
+    boxes.forEach(box => {
+      box.addEventListener('click', (e) => {
+        e.stopPropagation();
+        activateBox(box);
+      });
+    });
+
+    // click outside to clear
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.box')) {
+        boxes.forEach(b => b.classList.remove('active', 'focused'));
+        activeBox = null;
+      }
+    });
+
+    // focus logic (closest to viewport center)
+    function updateFocusedBox() {
+      const containerRect = scrollWrapper.getBoundingClientRect();
+      let closestBox = null;
+      let closestDistance = Infinity;
+
+      boxes.forEach(box => {
+        const rect = box.getBoundingClientRect();
+        const boxCenter = rect.left + rect.width / 2;
+        const containerCenter = containerRect.left + containerRect.width / 2;
+        const distance = Math.abs(containerCenter - boxCenter);
+        if (distance < closestDistance) { closestDistance = distance; closestBox = box; }
+      });
+
+      boxes.forEach(b => b.classList.remove('focused'));
+      if (closestBox && !closestBox.classList.contains('active')) {
+        closestBox.classList.add('focused');
+      }
+    }
+
+    scrollWrapper.addEventListener('scroll', () => {
+      updateFocusedBox();
+      if (activeBox) { activeBox.classList.remove('active'); activeBox = null; }
+    });
+
+    window.addEventListener('resize', updateFocusedBox);
+    window.addEventListener('load', updateFocusedBox);
+
+    // live clock
+    setInterval(() => {
+      const now = new Date();
+      const options = { hour: 'numeric', minute: 'numeric', hour12: true, timeZone: 'America/Chicago' };
+      const clock = document.getElementById('clock');
+      if (clock) clock.innerText = new Intl.DateTimeFormat('en-US', options).format(now);
+    }, 1000);
+
+    // Fake GitHub heatmap
+    // const heatmap = document.getElementById('heatmap');
+    // if (heatmap) {
+    //   const shades = ['#ebedf0', '#c6e48b', '#7bc96f', '#239a3b', '#196127'];
+    //   for (let i = 0; i < 53 * 7; i++) {
+    //     const cell = document.createElement('div');
+    //     cell.style.backgroundColor = shades[Math.floor(Math.random() * shades.length)];
+    //     heatmap.appendChild(cell);
+    //   }
+    // }
+
+    boxes.forEach(box =>{
+        box.addEventListener('click', (e) => {
+            box.classList.toggle('expanded');
+            box.classList.toggle('focused');
+        });
+
+    });
+
+    document.addEventListener('click', (e) => {
+  if (e.target.closest('.box')) {
+    box.classList.toggle('focused');
+  }
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.box')) {
+    document.querySelectorAll('.box.expanded').forEach(b => b.classList.remove('expanded'));
+  }
+});
+
+  </script>
+</body>
+</html>
