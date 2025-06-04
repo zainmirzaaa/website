@@ -36,10 +36,6 @@
     .box.focused span { opacity: 1; }
     .box.active { transform: scale(1.35) !important; z-index: 5 !important; }
 
-    Heatmap card
-    .rectangle { width: 550px; height: 100px; background: white; border: 2px solid #ccc; border-radius: 15px; display: flex; justify-content: center; align-items: center; margin: 2rem auto 0 auto; }
-    .heatmap { display: grid; grid-template-columns: repeat(53, 8px); grid-gap: 2px; justify-content: center; }
-    .heatmap div { width: 8px; height: 8px; border-radius: 2px; }
 
     .box.expanded {
   position: fixed;
@@ -70,15 +66,15 @@
   </audio>
 
   <!-- Top navigation -->
-  <div class="top-nav" id="top-nav" style="width: 100vw; position: fixed; top: 0; left: 0; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: white; z-index: 20; border-bottom: 1px solid #ccc; font-family: Calibri, sans-serif;">
+  <div class="top-nav" id="top-nav" style="width: 100vw; position: fixed; top: 0; left: 0; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: white; z-index: 20; font-family: Calibri, sans-serif;">
     <div style="display: flex; gap: 1.5rem; font-size: 1rem;">
-      <span style="color: #0070f3; font-weight: bold; border-bottom: 2px solid #0070f3; padding-bottom: 2px;">games</span>
+      <span style="color: gray; font-weight: bold; padding-bottom: 2px;">games</span>
       <span style="color: #999;">media</span>
     </div>
-    <div style="display: flex; gap: 1.5rem; font-size: 1rem; align-items: center;">
-      <span title="Search">🔍</span>
-      <span title="Settings">⚙️</span>
-      <span title="Profile">🤖</span>
+    <div style="display: flex; gap: 3.5rem; font-size: 1rem; align-items: center;">
+      <img src="images/Search (1).png" title="search" style="width:22px; height:22px;">
+      <img src="images/settings.png" title="settings" style="width:22px; height:22px;">
+      <img src="images/Group 2.png" title="pfp" style="width:30px; height:30px;">
       <span id="clock"></span>
     </div>
   </div>
@@ -202,7 +198,7 @@
     // live clock
     setInterval(() => {
       const now = new Date();
-      const options = { hour: 'numeric', minute: 'numeric', hour12: true, timeZone: 'America/Chicago' };
+      const options = { font: 'calibri', hour: 'numeric', minute: 'numeric', hour12: true, timeZone: 'America/Chicago' };
       const clock = document.getElementById('clock');
       if (clock) clock.innerText = new Intl.DateTimeFormat('en-US', options).format(now);
     }, 1000);
