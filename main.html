@@ -37,7 +37,9 @@
     .box.active { transform: scale(1.35) !important; z-index: 5 !important; }
 
 
-    .box.expanded {
+
+/* Expanded state */
+.box.expanded {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -51,10 +53,15 @@
   transition: all 0.3s ease;
 }
 
-.box.focused{
-    body, html {
-  overflow: hidden
+/* Lock background scroll when a box is expanded */
+body.no-scroll {
+  overflow: hidden;
 }
+
+
+
+.box.focused{
+  body, html { overflow: hidden }
 }
 
   </style>
@@ -90,7 +97,8 @@
     <div class="content">
       <div class="container" id="box-container">
         <div style="width: 450px; flex-shrink: 0;"></div>
-        <div class="box"><span>about me</span></div>
+        <div class="box">
+            <span>about me</span></div>
         <div class="box"><span>experience</span></div>
         <div class="box"><span>projects</span></div>
         <div class="box"><span>connect</span></div>
@@ -103,137 +111,122 @@
     </div>
   </div>
 
-  <script>
-    // Elements
-    const startBtn = document.getElementById('startBtn');
-    const scrollWrapper = document.getElementById('scroll-wrapper');
-    const boxes = document.querySelectorAll('.box');
-    let activeBox = null;
+<script>
+  // Elements
+  const startBtn = document.getElementById('startBtn');
+  const scrollWrapper = document.getElementById('scroll-wrapper');
+  const boxes = document.querySelectorAll('.box');
+  let activeBox = null;
 
-    // Start app
-    startBtn.addEventListener('click', beginSite);
+  // Start app
+  startBtn.addEventListener('click', beginSite);
 
-    function beginSite() {
-      document.getElementById('intro').classList.add('hidden');
-      document.getElementById('top-nav').classList.add('show');
+  function beginSite() {
+    document.getElementById('intro').classList.add('hidden');
+    document.getElementById('top-nav').classList.add('show');
 
-      // optional audio
-      const audio = document.getElementById('bgAudio');
-      if (audio && audio.src) {
-        audio.play().catch(() => {});
-      }
+    const audio = document.getElementById('bgAudio');
+    if (audio && audio.src) audio.play().catch(() => {});
 
-      const first = boxes[0];
-      if (first) {
-        scrollWrapper.scrollLeft = first.offsetLeft - (scrollWrapper.clientWidth - first.clientWidth) / 2;
-        updateFocusedBox();
-        first.classList.add('focused');
-      }
+    const first = boxes[0];
+    if (first) {
+      scrollWrapper.scrollLeft =
+        first.offsetLeft - (scrollWrapper.clientWidth - first.clientWidth) / 2;
+      updateFocusedBox();
+      first.classList.add('focused');
     }
+  }
 
-    function activateBox(element) {
-      boxes.forEach(b => b.classList.remove('active', 'focused'));
-      const targetLeft = element.offsetLeft - (scrollWrapper.clientWidth - element.clientWidth) / 2;
-      scrollWrapper.scrollTo({ left: targetLeft, behavior: 'smooth' });
-      element.classList.add('active', 'focused');
-      activeBox = element;
-    }
+  function activateBox(element) {
+    boxes.forEach(b => b.classList.remove('active', 'focused'));
+    const targetLeft =
+      element.offsetLeft - (scrollWrapper.clientWidth - element.clientWidth) / 2;
+    scrollWrapper.scrollTo({ left: targetLeft, behavior: 'smooth' });
+    element.classList.add('active', 'focused');
+    activeBox = element;
+  }
 
-    // wheel -> horizontal scroll
-    scrollWrapper.addEventListener('wheel', (e) => {
-      if (e.deltaY !== 0 || e.deltaX !== 0) {
-        scrollWrapper.scrollLeft += (e.deltaY + e.deltaX) * 4;
-        e.preventDefault();
-        if (activeBox) {
-          activeBox.classList.remove('active');
-          activeBox = null;
-        }
-      }
-    }, { passive: false });
-
-    // click to activate
-    boxes.forEach(box => {
-      box.addEventListener('click', (e) => {
-        e.stopPropagation();
-        activateBox(box);
-      });
-    });
-
-    // click outside to clear
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.box')) {
-        boxes.forEach(b => b.classList.remove('active', 'focused'));
+  // Horizontal scroll with wheel
+  scrollWrapper.addEventListener('wheel', (e) => {
+    if (e.deltaY !== 0 || e.deltaX !== 0) {
+      scrollWrapper.scrollLeft += (e.deltaY + e.deltaX) * 4;
+      e.preventDefault();
+      if (activeBox) {
+        activeBox.classList.remove('active');
         activeBox = null;
       }
-    });
-
-    // focus logic (closest to viewport center)
-    function updateFocusedBox() {
-      const containerRect = scrollWrapper.getBoundingClientRect();
-      let closestBox = null;
-      let closestDistance = Infinity;
-
-      boxes.forEach(box => {
-        const rect = box.getBoundingClientRect();
-        const boxCenter = rect.left + rect.width / 2;
-        const containerCenter = containerRect.left + containerRect.width / 2;
-        const distance = Math.abs(containerCenter - boxCenter);
-        if (distance < closestDistance) { closestDistance = distance; closestBox = box; }
-      });
-
-      boxes.forEach(b => b.classList.remove('focused'));
-      if (closestBox && !closestBox.classList.contains('active')) {
-        closestBox.classList.add('focused');
-      }
     }
+  }, { passive: false });
 
-    scrollWrapper.addEventListener('scroll', () => {
-      updateFocusedBox();
-      if (activeBox) { activeBox.classList.remove('active'); activeBox = null; }
+  // ----- EXPAND / COLLAPSE -----
+  // Click a box -> center it and expand; click outside -> collapse
+  boxes.forEach(box => {
+    box.addEventListener('click', e => {
+      e.stopPropagation(); // keep document handler from firing
+
+      // Center the clicked box in the scroller (optional but nice)
+      activateBox(box);
+
+      // Collapse any other expanded box
+      document.querySelectorAll('.box.expanded')
+        .forEach(b => b.classList.remove('expanded'));
+
+      // Expand this one & lock background scroll
+      box.classList.add('expanded');
+      document.body.classList.add('no-scroll');
+    });
+  });
+
+  document.addEventListener('click', e => {
+    // Click outside any .box -> collapse all expanded
+    if (!e.target.closest('.box')) {
+      document.querySelectorAll('.box.expanded')
+        .forEach(b => b.classList.remove('expanded'));
+      document.body.classList.remove('no-scroll');
+      boxes.forEach(b => b.classList.remove('active', 'focused'));
+      activeBox = null;
+    }
+  });
+
+  // Keep "focused" on the box nearest center while scrolling
+  function updateFocusedBox() {
+    const containerRect = scrollWrapper.getBoundingClientRect();
+    let closestBox = null;
+    let closestDistance = Infinity;
+
+    boxes.forEach(box => {
+      const rect = box.getBoundingClientRect();
+      const boxCenter = rect.left + rect.width / 2;
+      const containerCenter = containerRect.left + containerRect.width / 2;
+      const distance = Math.abs(containerCenter - boxCenter);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestBox = box;
+      }
     });
 
-    window.addEventListener('resize', updateFocusedBox);
-    window.addEventListener('load', updateFocusedBox);
-
-    // live clock
-    setInterval(() => {
-      const now = new Date();
-      const options = { font: 'calibri', hour: 'numeric', minute: 'numeric', hour12: true, timeZone: 'America/Chicago' };
-      const clock = document.getElementById('clock');
-      if (clock) clock.innerText = new Intl.DateTimeFormat('en-US', options).format(now);
-    }, 1000);
-
-    // Fake GitHub heatmap
-    // const heatmap = document.getElementById('heatmap');
-    // if (heatmap) {
-    //   const shades = ['#ebedf0', '#c6e48b', '#7bc96f', '#239a3b', '#196127'];
-    //   for (let i = 0; i < 53 * 7; i++) {
-    //     const cell = document.createElement('div');
-    //     cell.style.backgroundColor = shades[Math.floor(Math.random() * shades.length)];
-    //     heatmap.appendChild(cell);
-    //   }
-    // }
-
-    boxes.forEach(box =>{
-        box.addEventListener('click', (e) => {
-            box.classList.toggle('expanded');
-            box.classList.toggle('focused');
-        });
-
-    });
-
-    document.addEventListener('click', (e) => {
-  if (e.target.closest('.box')) {
-    box.classList.toggle('focused');
+    boxes.forEach(b => b.classList.remove('focused'));
+    if (closestBox && !closestBox.classList.contains('active')) {
+      closestBox.classList.add('focused');
+    }
   }
-});
 
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('.box')) {
-    document.querySelectorAll('.box.expanded').forEach(b => b.classList.remove('expanded'));
-  }
-});
+  scrollWrapper.addEventListener('scroll', () => {
+    updateFocusedBox();
+    if (activeBox) { activeBox.classList.remove('active'); activeBox = null; }
+  });
 
-  </script>
+  window.addEventListener('resize', updateFocusedBox);
+  window.addEventListener('load', updateFocusedBox);
+
+  // Live clock
+  setInterval(() => {
+    const now = new Date();
+    const options = { hour: 'numeric', minute: 'numeric', hour12: true, timeZone: 'America/Chicago' };
+    const clock = document.getElementById('clock');
+    if (clock) clock.innerText = new Intl.DateTimeFormat('en-US', options).format(now);
+  }, 1000);
+</script>
+
 </body>
 </html>
