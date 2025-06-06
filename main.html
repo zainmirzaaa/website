@@ -81,6 +81,40 @@ body.no-scroll {
   display: block;             /* show only when expanded */
 }
 
+/* Expanded about box layout */
+.box.expanded.about-box {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;    /* push content toward the top */
+  justify-content: space-between;
+  padding: 2rem;
+  gap: 2rem;
+  font-family: Calibri, sans-serif;
+}
+
+/* Text block */
+.box.expanded .about-text {
+  display: block;
+  flex: 1;
+  max-width: 50%;
+}
+
+/* Headline */
+.box.expanded .about-text h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;        /* space line after “Hey, I’m Zain” */
+  color: #222;
+}
+
+/* Paragraphs */
+.box.expanded .about-text p {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #444;
+}
+
+
+
 
   </style>
 </head>
@@ -116,6 +150,11 @@ body.no-scroll {
       <div class="container" id="box-container">
         <div style="width: 450px; flex-shrink: 0;"></div>
         <div class="box about-box">
+            <div class="about-text">
+                <h2>hello!</h2>
+                <p>my name is zain and i am currently studying computer science at ut dallas</p>
+                <p>i previously interned at blackberry. in my free time i like hang out with my friends, play video games, and watch anime</p>
+            </div>
             <span>about me</span>
         <img src="images/IMG_3239.jpg" alt="About Me Photo" class="about-photo">
         </div>
