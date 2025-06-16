@@ -31,7 +31,7 @@
     .box span { font-size: 1rem; color: #333; opacity: 0; transition: opacity 0.25s ease; position: absolute; bottom: -2.5rem; text-transform: lowercase; }
 
     /* Hide about text by default */
-    .about-text, .experience-text {
+    .about-text, .experience-text, .projects-text {
       display: none;
     }
 
@@ -86,6 +86,36 @@
       color: #222;
       margin-bottom: 0.5rem;
       font-weight: 600;
+    }
+
+    /* Projects box specific styling */
+    .box.expanded.projects-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      font-family: Calibri, sans-serif;
+    }
+
+    .box.expanded .projects-text {
+      display: block;
+    }
+
+    .project-item {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .project-item h3 {
+      font-size: 1.4rem;
+      color: #222;
+      margin: 0;
+      font-weight: 700;
     }
 
     .experience-item h4 {
@@ -264,6 +294,11 @@
             <div class="about-label">experience</div>
         </div>
         <div class="box projects-box">
+            <div class="projects-text">
+                <div class="project-item">
+                    <h3>AI Agent for Discord</h3>
+                </div>
+            </div>
             <div class="about-label">projects</div>
         </div>
         <div class="box"><span>connect</span></div>
