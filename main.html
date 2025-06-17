@@ -72,6 +72,13 @@
       gap: 1.5rem;
     }
 
+    .project-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      flex: 1;
+    }
+
     .experience-item {
       background: #f8f9fa;
       border: 2px solid #e9ecef;
@@ -308,11 +315,18 @@
         </div>
         <div class="box projects-box">
             <div class="projects-text">
-                <div class="project-item">
-                    <h3>AI Agent for Discord</h3>
+                <div class="project-column">
+                    <div class="project-item">
+                        <h3>AI Agent for Discord</h3>
+                    </div>
+                    <div class="project-item">
+                        <h3>Link LLM for Stack Overflow</h3>
+                    </div>
                 </div>
-                <div class="project-item project-description">
-                    <p>Constructed a full stack AI recording system for gamers via Nvidia Shadowplay. Built an AI agent for transcription and natural language processing to rank and highlight clips.</p>
+                <div class="project-column">
+                    <div class="project-item project-description">
+                        <p>Constructed a full stack AI recording system for gamers via Nvidia Shadowplay. Built an AI agent for transcription and natural language processing to rank and highlight clips.</p>
+                    </div>
                 </div>
             </div>
             <div class="about-label">projects</div>
