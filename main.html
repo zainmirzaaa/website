@@ -158,6 +158,8 @@
       gap: 2rem;
       align-items: center;
       justify-content: center;
+      flex-wrap: wrap;
+      width: 100%;
     }
 
     .connect-link {
@@ -411,6 +413,14 @@
                             <span>LinkedIn</span>
                         </div>
                     </a>
+                    <a href="mailto:zainnmirzaa@gmail.com" class="connect-link">
+                        <div class="connect-item">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.9.732-1.636 1.636-1.636h.749L12 10.506l9.615-6.685h.749c.904 0 1.636.732 1.636 1.636z"/>
+                            </svg>
+                            <span>Email</span>
+                        </div>
+                    </a>
                 </div>
             </div>
             <div class="about-label">connect</div>
@@ -514,7 +524,7 @@
       const distance = Math.abs(containerCenter - boxCenter);
       if (distance < closestDistance) {
         closestDistance = distance;
-        closestBox = box;
+        boxCenter = box;
       }
     });
 
