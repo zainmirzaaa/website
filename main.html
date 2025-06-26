@@ -20,9 +20,9 @@
     .intro-screen p { font-size: 1rem; color: gray; cursor: pointer; }
 
     /* Keep the horizontal scrollbar at the very bottom */
-    .scroll-wrapper { width: 100vw; height: 100vh; display: flex; align-items: flex-start; overflow-x: auto; overflow-y: hidden; scroll-behavior: auto; padding-top: 150px; }
+    .scroll-wrapper { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; padding-top: 50px; }
 
-    .content { display: flex; flex-direction: column; gap: 4rem; padding: 0 1rem 2rem 1rem; width: max-content; }
+    .content { display: flex; flex-direction: row; gap: 2rem; align-items: center; justify-content: center; padding: 2rem; }
 
     /* Row of boxes */
     .container { display: flex; gap: 2rem; align-items: center; }
@@ -327,8 +327,6 @@
   <!-- Horizontal scroller -->
   <div class="scroll-wrapper" id="scroll-wrapper">
     <div class="content">
-      <div class="container" id="box-container">
-        <div style="width: 450px; flex-shrink: 0;"></div>
         <div class="box about-box">
             <div class="about-text">
                 <h2>hello!</h2>
@@ -419,11 +417,6 @@
         <div class="box">
             <div class="about-label">music</div>
         </div>
-        <div style="width: 450px; flex-shrink: 0;"></div>
-      </div>
-      <div class="rectangle" style="margin-top: 4rem;">
-        <div class="heatmap" id="heatmap"></div>
-      </div>
     </div>
   </div>
 
