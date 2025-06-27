@@ -19,16 +19,12 @@
     .intro-screen h1 { font-size: 2rem; margin-bottom: 1rem; }
     .intro-screen p { font-size: 1rem; color: gray; cursor: pointer; }
 
-    /* Keep the horizontal scrollbar at the very bottom */
-    .scroll-wrapper { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; padding-top: 50px; }
+    /* One-page layout */
+    .scroll-wrapper { width: 100vw; height: 100vh; display: flex; align-items: flex-start; justify-content: center; overflow: hidden; padding-top: 80px; }
 
-    .content { display: flex; flex-direction: row; gap: 2rem; align-items: center; justify-content: center; padding: 2rem; }
-
-    /* Row of boxes */
-    .container { display: flex; gap: 2rem; align-items: center; }
+    .content { display: flex; flex-direction: row; gap: 1rem; align-items: center; justify-content: center; padding: 2rem; }
 
     .box { width: 250px; height: 250px; background: white; border: 3px solid #ccc; border-radius: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.05); transition: transform 0.25s ease, box-shadow 0.25s ease, outline 0.25s ease; cursor: pointer; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; font-size: 2rem; transform-origin: center; }
-    .box span { font-size: 1rem; color: #333; opacity: 0; transition: opacity 0.25s ease; position: absolute; bottom: -2.5rem; text-transform: lowercase; }
 
     /* Hide about text by default */
     .about-text, .experience-text, .projects-text, .connect-text {
@@ -205,13 +201,10 @@
       margin: 0;
     }
 
-    /* Enlarge proportionally on hover/focus/active; spacing stays due to flex gap */
+    /* Enlarge proportionally on hover */
     .box:hover { transform: scale(1.35); box-shadow: 0 20px 40px rgba(0,0,0,0.15); outline: 4px solid black; z-index: 2; }
-    .box.focused { outline: 4px solid black; outline-offset: -3px; transform: scale(1.35); z-index: 2; }
-    .box.focused span { opacity: 1; }
-    .box.active { transform: scale(1.35) !important; z-index: 5 !important; }
 
-    /* Expanded state - Made smaller */
+    /* Expanded state */
     .box.expanded {
       position: fixed;
       top: 42%;
@@ -229,10 +222,6 @@
     /* Lock background scroll when a box is expanded */
     body.no-scroll {
       overflow: hidden;
-    }
-
-    .box.focused{
-      body, html { overflow: hidden }
     }
 
     .about-photo {
@@ -324,7 +313,7 @@
     <p id="startBtn">tap to use controller</p>
   </div>
 
-  <!-- Horizontal scroller -->
+  <!-- One-page layout -->
   <div class="scroll-wrapper" id="scroll-wrapper">
     <div class="content">
         <div class="box about-box">
@@ -423,9 +412,7 @@
 <script>
   // Elements
   const startBtn = document.getElementById('startBtn');
-  const scrollWrapper = document.getElementById('scroll-wrapper');
   const boxes = document.querySelectorAll('.box');
-  let activeBox = null;
 
   // Start app
   startBtn.addEventListener('click', beginSite);
@@ -436,45 +423,13 @@
 
     const audio = document.getElementById('bgAudio');
     if (audio && audio.src) audio.play().catch(() => {});
-
-    const first = boxes[0];
-    if (first) {
-      scrollWrapper.scrollLeft =
-        first.offsetLeft - (scrollWrapper.clientWidth - first.clientWidth) / 2;
-      updateFocusedBox();
-      first.classList.add('focused');
-    }
   }
-
-  function activateBox(element) {
-    boxes.forEach(b => b.classList.remove('active', 'focused'));
-    const targetLeft =
-      element.offsetLeft - (scrollWrapper.clientWidth - element.clientWidth) / 2;
-    scrollWrapper.scrollTo({ left: targetLeft, behavior: 'smooth' });
-    element.classList.add('active', 'focused');
-    activeBox = element;
-  }
-
-  // Horizontal scroll with wheel
-  scrollWrapper.addEventListener('wheel', (e) => {
-    if (e.deltaY !== 0 || e.deltaX !== 0) {
-      scrollWrapper.scrollLeft += (e.deltaY + e.deltaX) * 4;
-      e.preventDefault();
-      if (activeBox) {
-        activeBox.classList.remove('active');
-        activeBox = null;
-      }
-    }
-  }, { passive: false });
 
   // ----- EXPAND / COLLAPSE -----
-  // Click a box -> center it and expand; click outside -> collapse
+  // Click a box -> expand; click outside -> collapse
   boxes.forEach(box => {
     box.addEventListener('click', e => {
       e.stopPropagation(); // keep document handler from firing
-
-      // Center the clicked box in the scroller (optional but nice)
-      activateBox(box);
 
       // Collapse any other expanded box
       document.querySelectorAll('.box.expanded')
@@ -492,41 +447,8 @@
       document.querySelectorAll('.box.expanded')
         .forEach(b => b.classList.remove('expanded'));
       document.body.classList.remove('no-scroll');
-      boxes.forEach(b => b.classList.remove('active', 'focused'));
-      activeBox = null;
     }
   });
-
-  // Keep "focused" on the box nearest center while scrolling
-  function updateFocusedBox() {
-    const containerRect = scrollWrapper.getBoundingClientRect();
-    let closestBox = null;
-    let closestDistance = Infinity;
-
-    boxes.forEach(box => {
-      const rect = box.getBoundingClientRect();
-      const boxCenter = rect.left + rect.width / 2;
-      const containerCenter = containerRect.left + containerRect.width / 2;
-      const distance = Math.abs(containerCenter - boxCenter);
-      if (distance < closestDistance) {
-        closestDistance = distance;
-        boxCenter = box;
-      }
-    });
-
-    boxes.forEach(b => b.classList.remove('focused'));
-    if (closestBox && !closestBox.classList.contains('active')) {
-      closestBox.classList.add('focused');
-    }
-  }
-
-  scrollWrapper.addEventListener('scroll', () => {
-    updateFocusedBox();
-    if (activeBox) { activeBox.classList.remove('active'); activeBox = null; }
-  });
-
-  window.addEventListener('resize', updateFocusedBox);
-  window.addEventListener('load', updateFocusedBox);
 
   // Live clock
   setInterval(() => {
