@@ -20,9 +20,67 @@
     .intro-screen p { font-size: 1rem; color: gray; cursor: pointer; }
 
     /* One-page layout */
-    .scroll-wrapper { width: 100vw; height: 100vh; display: flex; align-items: flex-start; justify-content: center; overflow: hidden; padding-top: 120px; }
+    .scroll-wrapper { width: 100vw; height: 100vh; display: flex; align-items: flex-start; justify-content: center; overflow-x: hidden; overflow-y: auto; padding-top: 120px; }
 
-    .content { display: flex; flex-direction: row; gap: 1rem; align-items: center; justify-content: center; padding: 2rem; }
+    .content { display: flex; flex-direction: row; gap: 1rem; align-items: center; justify-content: center; padding: 2rem; flex-wrap: wrap; }
+
+    /* Mobile responsive design */
+    @media (max-width: 768px) {
+      .scroll-wrapper { 
+        padding-top: 80px; 
+        align-items: flex-start;
+        overflow-y: auto;
+      }
+      
+      .content { 
+        flex-direction: column; 
+        gap: 1.5rem; 
+        padding: 1rem;
+        width: 100%;
+        align-items: center;
+      }
+      
+      .box { 
+        width: 200px; 
+        height: 200px; 
+      }
+
+      .about-label {
+        font-size: 1.5rem;
+      }
+      
+      /* Smaller expanded boxes on mobile */
+      .box.expanded {
+        width: 90vw;
+        height: 80vh;
+        top: 45%;
+      }
+      
+      /* Adjust about box layout for mobile */
+      .box.expanded.about-box {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .box.expanded .about-text {
+        max-width: 100%;
+      }
+      
+      .about-photo {
+        position: static;
+        transform: none;
+        max-width: 80%;
+        max-height: 40%;
+        margin-top: 1rem;
+      }
+      
+      .box.expanded .about-photo {
+        position: static;
+        transform: none;
+        animation: none;
+        opacity: 1;
+      }
+    }
 
     .box { width: 250px; height: 250px; background: white; border: 3px solid #ccc; border-radius: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.05); transition: transform 0.25s ease, box-shadow 0.25s ease, outline 0.25s ease; cursor: pointer; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; font-size: 2rem; transform-origin: center; }
 
@@ -352,7 +410,7 @@
                     </div>
                 </div>
             </div>
-            <div class="about-label">experience</div>
+            <div class="about-label">💼 experience</div>
         </div>
         <div class="box projects-box">
             <div class="projects-text">
