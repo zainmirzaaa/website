@@ -5,13 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>zainstation</title>
   <style>
-    /* --- Visibility helpers for the top nav --- */
-    .top-nav { display: none; }
-    .top-nav.show { display: flex !important; }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body { background: white; font-family: Calibri, sans-serif; overflow: hidden; }
+
+    /* --- Pages --- */
+    .page { 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100vw; 
+      height: 100vh; 
+      background: white; 
+      z-index: 10; 
+      opacity: 0; 
+      pointer-events: none; 
+      transition: opacity 0.3s ease;
+      overflow-y: auto;
+    }
+    
+    .page.active { 
+      opacity: 1; 
+      pointer-events: auto; 
+    }
+
+    /* Home button */
+    .home-btn {
+      position: fixed;
+      top: 2rem;
+      left: 2rem;
+      width: 50px;
+      height: 50px;
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      z-index: 100;
+    }
+
+    .home-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+
+    .home-btn svg {
+      width: 24px;
+      height: 24px;
+      color: #333;
+    }
 
     /* --- Intro screen --- */
     .intro-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; transition: opacity 0.5s ease; }
@@ -19,25 +64,246 @@
     .intro-screen h1 { font-size: 2rem; margin-bottom: 1rem; }
     .intro-screen p { font-size: 1rem; color: gray; cursor: pointer; }
 
-    /* One-page layout */
-    .scroll-wrapper { width: 100vw; height: 100vh; display: flex; align-items: flex-start; justify-content: center; overflow-x: hidden; overflow-y: auto; padding-top: 120px; }
+    /* --- Top navigation --- */
+    .top-nav { display: none; }
+    .top-nav.show { display: flex !important; }
 
-    .content { display: flex; flex-direction: row; gap: 1rem; align-items: center; justify-content: center; padding: 2rem; flex-wrap: wrap; }
+    /* Home page layout */
+    .home-page {
+      width: 100vw; 
+      height: 100vh; 
+      display: flex; 
+      align-items: flex-start; 
+      justify-content: center; 
+      overflow: hidden; 
+      padding-top: 120px;
+    }
 
-    /* Mobile responsive design */
+    .content { 
+      display: flex; 
+      flex-direction: row; 
+      gap: 1rem; 
+      align-items: center; 
+      justify-content: center; 
+      padding: 2rem; 
+    }
+
+    .box { 
+      width: 250px; 
+      height: 250px; 
+      background: white; 
+      border: 3px solid #ccc; 
+      border-radius: 20px; 
+      box-shadow: 0 0 10px rgba(0,0,0,0.05); 
+      transition: transform 0.25s ease, box-shadow 0.25s ease, outline 0.25s ease; 
+      cursor: pointer; 
+      flex-shrink: 0; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: center; 
+      align-items: center; 
+      position: relative; 
+      font-size: 2rem; 
+      transform-origin: center; 
+    }
+
+    .about-label {
+      font-size: 1.8rem;
+      color: #333;
+      text-transform: lowercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .box:hover { 
+      transform: scale(1.35); 
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
+      outline: 4px solid black; 
+      z-index: 2; 
+    }
+
+    /* Page content styling */
+    .page-content {
+      padding: 6rem 2rem 2rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .page h1 {
+      font-size: 2.5rem;
+      color: #333;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    /* About page specific */
+    .about-content {
+      display: flex;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .about-text {
+      flex: 1;
+    }
+
+    .about-text h2 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: #222;
+    }
+
+    .about-text p {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: #444;
+      line-height: 1.6;
+    }
+
+    .about-photo {
+      max-width: 400px;
+      max-height: 500px;
+      border-radius: 12px;
+      object-fit: cover;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    /* Experience page */
+    .experience-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .experience-item {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .experience-item h3 {
+      font-size: 1.6rem;
+      color: #222;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .experience-item h4 {
+      font-size: 1.3rem;
+      color: #444;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .experience-item p {
+      font-size: 1.1rem;
+      color: #666;
+    }
+
+    /* Projects page */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .project-item {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .project-item h3 {
+      font-size: 1.8rem;
+      color: #222;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .project-item p {
+      font-size: 1.1rem;
+      color: #444;
+      line-height: 1.6;
+    }
+
+    /* Connect page */
+    .connect-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .connect-item {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+    }
+
+    .connect-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .connect-item svg {
+      color: #333;
+      margin-bottom: 1rem;
+    }
+
+    .connect-item span {
+      font-size: 1.2rem;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .connect-link {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Music page */
+    .music-content {
+      text-align: center;
+      padding-top: 4rem;
+    }
+
+    .music-content h2 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 2rem;
+    }
+
+    .music-content p {
+      font-size: 1.2rem;
+      color: #666;
+    }
+
+    /* Mobile responsive */
     @media (max-width: 768px) {
-      .scroll-wrapper { 
-        padding-top: 80px; 
-        align-items: flex-start;
-        overflow-y: auto;
+      .home-page {
+        padding-top: 80px;
       }
       
       .content { 
         flex-direction: column; 
         gap: 1.5rem; 
         padding: 1rem;
-        width: 100%;
-        align-items: center;
       }
       
       .box { 
@@ -48,438 +314,54 @@
       .about-label {
         font-size: 1.5rem;
       }
-      
-      /* Smaller expanded boxes on mobile */
-      .box.expanded {
-        width: 95vw;
-        height: 85vh;
-        top: 45%;
-        padding: 0;
-        overflow-y: auto;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
+
+      .page-content {
+        padding: 4rem 1rem 1rem 1rem;
       }
-      
-      /* Adjust about box layout for mobile */
-      .box.expanded.about-box {
+
+      .page h1 {
+        font-size: 2rem;
+      }
+
+      .about-content {
         flex-direction: column;
         text-align: center;
-        padding: 1.5rem;
-        overflow-y: auto;
       }
-      
-      .box.expanded .about-text {
-        max-width: 100%;
-        margin-bottom: 1rem;
-        flex-shrink: 0;
+
+      .about-text h2 {
+        font-size: 1.6rem;
       }
-      
-      .box.expanded .about-text h2 {
-        font-size: 1.3rem;
-        margin-bottom: 0.8rem;
+
+      .about-text p {
+        font-size: 1rem;
       }
-      
-      .box.expanded .about-text p {
-        font-size: 0.85rem;
-        margin-bottom: 0.6rem;
-        line-height: 1.4;
-      }
-      
+
       .about-photo {
-        position: static;
-        transform: none;
-        max-width: 70%;
-        max-height: 30%;
-        margin-top: 0.5rem;
-        flex-shrink: 0;
+        max-width: 100%;
+        max-height: 300px;
       }
-      
-      .box.expanded .about-photo {
-        position: static;
-        transform: none;
-        animation: none;
-        opacity: 1;
-        max-width: 70%;
-        max-height: 30%;
+
+      .experience-grid,
+      .projects-grid {
+        grid-template-columns: 1fr;
       }
-      
-      /* Experience box mobile scaling */
-      .box.expanded.experience-box {
-        padding: 0;
-        overflow-y: auto;
-        justify-content: flex-start;
-        align-items: flex-start;
+
+      .home-btn {
+        top: 1rem;
+        left: 1rem;
+        width: 40px;
+        height: 40px;
       }
-      
-      .box.expanded .experience-text {
-        flex-direction: column;
-        gap: 0.8rem;
-        width: 100%;
-        box-sizing: border-box;
-        padding: 3rem 1.5rem 2rem 1.5rem;
-        margin: 0;
-        min-height: 100%;
+
+      .home-btn svg {
+        width: 20px;
+        height: 20px;
       }
-      
-      .experience-column {
-        display: flex;
-        flex-direction: column;
-        gap: 0.8rem;
-      }
-      
-      .experience-item {
-        padding: 0.8rem;
-        margin-bottom: 0.5rem;
-        flex-shrink: 0;
-      }
-      
-      .experience-item:first-child {
-        margin-top: 0;
-      }
-      
-      .experience-item h3 {
-        font-size: 1.1rem;
-        margin-bottom: 0.3rem;
-      }
-      
-      .experience-item h4 {
-        font-size: 0.9rem;
-        margin-bottom: 0.3rem;
-      }
-      
-      .experience-item p {
-        font-size: 0.8rem;
-      }
-      
-      /* Projects box mobile scaling */
-      .box.expanded.projects-box {
-        padding: 0;
-        overflow-y: auto;
-        justify-content: flex-start;
-        align-items: flex-start;
-      }
-      
-      .box.expanded .projects-text {
-        flex-direction: column;
-        gap: 0.8rem;
-        width: 100%;
-        box-sizing: border-box;
-        padding: 3rem 1.5rem 2rem 1.5rem;
-        margin: 0;
-        min-height: 100%;
-      }
-      
-      .project-column {
-        display: flex;
-        flex-direction: column;
-        gap: 0.8rem;
-      }
-      
-      .project-item {
-        padding: 0.8rem;
-        min-height: 60px;
-        margin-bottom: 0.5rem;
-        flex-shrink: 0;
-      }
-      
-      .project-item:first-child {
-        margin-top: 0;
-      }
-      
-      .project-item h3 {
-        font-size: 1.1rem;
-        margin-bottom: 0.4rem;
-      }
-      
-      .project-item p {
-        font-size: 0.75rem;
-        line-height: 1.3;
-      }
-      
-      /* Connect box mobile scaling */
-      .connect-icons {
-        gap: 1rem;
-        flex-direction: row;
-        justify-content: center;
-      }
-      
-      .connect-item {
-        padding: 1rem;
-        min-width: 80px;
-      }
-      
-      .connect-item svg {
-        width: 30px;
-        height: 30px;
-      }
-    }
-
-    .box { width: 250px; height: 250px; background: white; border: 3px solid #ccc; border-radius: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.05); transition: transform 0.25s ease, box-shadow 0.25s ease, outline 0.25s ease; cursor: pointer; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; font-size: 2rem; transform-origin: center; }
-
-    /* Hide about text by default */
-    .about-text, .experience-text, .projects-text, .connect-text {
-      display: none;
-    }
-
-    /* About label styling - shown in center of collapsed box */
-    .about-label {
-      font-size: 1.8rem;
-      color: #333;
-      text-transform: lowercase;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Hide about label when expanded */
-    .box.expanded .about-label {
-      display: none;
-    }
-
-    /* Experience box specific styling */
-    .box.expanded.experience-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-      font-family: Calibri, sans-serif;
-    }
-
-    .box.expanded .experience-text {
-      display: flex;
-      gap: 2rem;
-      align-items: flex-start;
-    }
-
-    .experience-column {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .project-column {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      flex: 1;
-    }
-
-    .experience-item {
-      background: #f8f9fa;
-      border: 2px solid #e9ecef;
-      border-radius: 12px;
-      padding: 1.5rem;
-      text-align: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    .experience-item h3 {
-      font-size: 1.4rem;
-      color: #222;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-    }
-
-    /* Projects box specific styling */
-    .box.expanded.projects-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-      font-family: Calibri, sans-serif;
-    }
-
-    .box.expanded .projects-text {
-      display: flex;
-      gap: 2rem;
-      align-items: stretch;
-    }
-
-    .project-item {
-      background: #f8f9fa;
-      border: 2px solid #e9ecef;
-      border-radius: 12px;
-      padding: 1.5rem;
-      text-align: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 120px;
-    }
-
-    .project-item h3 {
-      font-size: 1.4rem;
-      color: #222;
-      margin: 0;
-      font-weight: 700;
-    }
-
-    .project-item p {
-      font-size: 0.9rem;
-      color: #444;
-      margin: 0;
-      line-height: 1.4;
-    }
-
-    /* Connect box specific styling */
-    .box.expanded.connect-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-      font-family: Calibri, sans-serif;
-    }
-
-    .box.expanded .connect-text {
-      display: block;
-    }
-
-    .connect-icons {
-      display: flex;
-      gap: 2rem;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
-      width: 100%;
-    }
-
-    .connect-link {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .connect-item {
-      background: #f8f9fa;
-      border: 2px solid #e9ecef;
-      border-radius: 12px;
-      padding: 1.5rem;
-      text-align: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      cursor: pointer;
-      min-width: 100px;
-    }
-
-    .connect-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    }
-
-    .connect-item svg {
-      color: #333;
-    }
-
-    .experience-item h4 {
-      font-size: 1.2rem;
-      color: #444;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
-
-    .experience-item p {
-      font-size: 1rem;
-      color: #666;
-      margin: 0;
-    }
-
-    /* Enlarge proportionally on hover */
-    .box:hover { transform: scale(1.35); box-shadow: 0 20px 40px rgba(0,0,0,0.15); outline: 4px solid black; z-index: 2; }
-
-    /* Expanded state */
-    .box.expanded {
-      position: fixed;
-      top: 42%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(1) !important;
-      width: 60vw;
-      height: 60vh;
-      border-radius: 20px;
-      background: white;
-      z-index: 999;
-      box-shadow: 0 0 40px rgba(0,0,0,0.3);
-      transition: all 0.3s ease;
-    }
-
-    /* Lock background scroll when a box is expanded */
-    body.no-scroll {
-      overflow: hidden;
-    }
-
-    .about-photo {
-      display: none;              /* hidden by default */
-      position: absolute;
-      right: 10%;                 /* push to the right side */
-      top: 50%;                   /* vertical middle */
-      transform: translateY(-50%);
-      max-width: 40%;             /* take up right side */
-      max-height: 70%;
-      border-radius: 12px;
-      object-fit: cover;          /* keep proportions */
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    }
-
-    .box.expanded .about-photo {
-      display: block;             /* show only when expanded */
-      opacity: 0;
-      animation: fadeInPhoto 0.4s ease 0.2s forwards;
-    }
-
-    @keyframes fadeInPhoto {
-      from {
-        opacity: 0;
-        transform: translateY(-50%) scale(0.9);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(-50%) scale(1);
-      }
-    }
-
-    /* Expanded about box layout */
-    .box.expanded.about-box {
-      display: flex;
-      flex-direction: row;
-      align-items: center;        /* center content vertically */
-      justify-content: space-between;
-      padding: 2rem;
-      gap: 2rem;
-      font-family: Calibri, sans-serif;
-    }
-
-    /* Text block - show only when expanded */
-    .box.expanded .about-text {
-      display: block;
-      flex: 1;
-      max-width: 50%;
-    }
-
-    /* Headline */
-    .box.expanded .about-text h2 {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;        /* space line after "Hey, I'm Zain" */
-      color: #222;
-    }
-
-    /* Paragraphs */
-    .box.expanded .about-text p {
-      font-size: 1rem;
-      margin-bottom: 0.5rem;
-      color: #444;
     }
   </style>
 </head>
 <body>
-  <!-- Optional background audio (replace src with your MP3). Plays on beginSite click -->
+  <!-- Optional background audio -->
   <audio id="bgAudio" loop>
     <source src="" type="audio/mpeg">
   </audio>
@@ -504,106 +386,160 @@
     <p id="startBtn">tap to use controller</p>
   </div>
 
-  <!-- One-page layout -->
-  <div class="scroll-wrapper" id="scroll-wrapper">
+  <!-- Home Page -->
+  <div class="page home-page active" id="home-page">
     <div class="content">
-        <div class="box about-box">
-            <div class="about-text">
-                <h2>hello!</h2>
-                <p>my name is zain and i am currently studying computer science at ut dallas</p>
-                <p>i previously interned at blackberry. in my free time i like hang out with my friends, play video games, and watch anime</p>
-            </div>
+        <div class="box about-box" onclick="showPage('about-page')">
             <div class="about-label">👋 about me</div>
-            <img src="images/IMG_3239.jpg" alt="About Me Photo" class="about-photo">
         </div>
-        <div class="box experience-box">
-            <div class="experience-text">
-                <div class="experience-column">
-                    <div class="experience-item">
-                        <h3>Software Engineer Intern</h3>
-                        <h4>BlackBerry</h4>
-                        <p>Jan 2024 - Apr 2024</p>
-                    </div>
-                    <div class="experience-item">
-                        <h3>Teaching Assistant</h3>
-                        <h4>UT Dallas</h4>
-                        <p>Jan 2025 - May 2025</p>
-                    </div>
-                </div>
-                <div class="experience-column">
-                    <div class="experience-item">
-                        <h3>Software Team Developer</h3>
-                        <h4>AISC</h4>
-                        <p>Mar 2024 - Jan 2025</p>
-                    </div>
-                    <div class="experience-item">
-                        <h3>Backend Team Lead</h3>
-                        <h4>ACM</h4>
-                        <p>Sep 2023 - Dec 2023</p>
-                    </div>
-                </div>
-            </div>
+        <div class="box experience-box" onclick="showPage('experience-page')">
             <div class="about-label">💼 experience</div>
         </div>
-        <div class="box projects-box">
-            <div class="projects-text">
-                <div class="project-column">
-                    <div class="project-item">
-                        <h3>AI Agent for Discord</h3>
-                    </div>
-                    <div class="project-item project-description">
-                        <p>Constructed a full stack AI recording system for gamers via Nvidia Shadowplay. Built an AI agent for transcription and natural language processing to rank and highlight clips.</p>
-                    </div>
-                </div>
-                <div class="project-column">
-                    <div class="project-item">
-                        <h3>Link LLM for Stack Overflow</h3>
-                    </div>
-                    <div class="project-item project-description">
-                        <p>Created a code assistant with React and OpenAI that uses LLMs to search, rank, and surface Stack Overflow links.</p>
-                    </div>
-                </div>
-            </div>
+        <div class="box projects-box" onclick="showPage('projects-page')">
             <div class="about-label">🍎 projects</div>
         </div>
-        <div class="box connect-box">
-            <div class="connect-text">
-                <div class="connect-icons">
-                    <a href="https://github.com/zainmirzaaa" target="_blank" class="connect-link">
-                        <div class="connect-item">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                            </svg>
-                        </div>
-                    </a>
-                    <a href="https://www.linkedin.com/in/zain-mirza-80540b2a2/" target="_blank" class="connect-link">
-                        <div class="connect-item">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                            </svg>
-                        </div>
-                    </a>
-                    <a href="mailto:zainnmirzaa@gmail.com" class="connect-link">
-                        <div class="connect-item">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.9.732-1.636 1.636-1.636h.749L12 10.506l9.615-6.685h.749c.904 0 1.636.732 1.636 1.636z"/>
-                            </svg>
-                        </div>
-                    </a>
-                </div>
-            </div>
+        <div class="box connect-box" onclick="showPage('connect-page')">
             <div class="about-label">🔗 connect</div>
         </div>
-        <div class="box">
+        <div class="box music-box" onclick="showPage('music-page')">
             <div class="about-label">🎵 music</div>
         </div>
+    </div>
+  </div>
+
+  <!-- About Page -->
+  <div class="page" id="about-page">
+    <div class="home-btn" onclick="showPage('home-page')">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+    </div>
+    <div class="page-content">
+      <h1>👋 About Me</h1>
+      <div class="about-content">
+        <div class="about-text">
+          <h2>Hello!</h2>
+          <p>My name is Zain and I am currently studying computer science at UT Dallas.</p>
+          <p>I previously interned at BlackBerry. In my free time I like to hang out with my friends, play video games, and watch anime.</p>
+        </div>
+        <img src="images/IMG_3239.jpg" alt="About Me Photo" class="about-photo">
+      </div>
+    </div>
+  </div>
+
+  <!-- Experience Page -->
+  <div class="page" id="experience-page">
+    <div class="home-btn" onclick="showPage('home-page')">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+    </div>
+    <div class="page-content">
+      <h1>💼 Experience</h1>
+      <div class="experience-grid">
+        <div class="experience-item">
+          <h3>Software Engineer Intern</h3>
+          <h4>BlackBerry</h4>
+          <p>Jan 2024 - Apr 2024</p>
+        </div>
+        <div class="experience-item">
+          <h3>Teaching Assistant</h3>
+          <h4>UT Dallas</h4>
+          <p>Jan 2025 - May 2025</p>
+        </div>
+        <div class="experience-item">
+          <h3>Software Team Developer</h3>
+          <h4>AISC</h4>
+          <p>Mar 2024 - Jan 2025</p>
+        </div>
+        <div class="experience-item">
+          <h3>Backend Team Lead</h3>
+          <h4>ACM</h4>
+          <p>Sep 2023 - Dec 2023</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Projects Page -->
+  <div class="page" id="projects-page">
+    <div class="home-btn" onclick="showPage('home-page')">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+    </div>
+    <div class="page-content">
+      <h1>🍎 Projects</h1>
+      <div class="projects-grid">
+        <div class="project-item">
+          <h3>AI Agent for Discord</h3>
+          <p>Constructed a full stack AI recording system for gamers via Nvidia Shadowplay. Built an AI agent for transcription and natural language processing to rank and highlight clips.</p>
+        </div>
+        <div class="project-item">
+          <h3>Link LLM for Stack Overflow</h3>
+          <p>Created a code assistant with React and OpenAI that uses LLMs to search, rank, and surface Stack Overflow links.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connect Page -->
+  <div class="page" id="connect-page">
+    <div class="home-btn" onclick="showPage('home-page')">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+    </div>
+    <div class="page-content">
+      <h1>🔗 Connect</h1>
+      <div class="connect-grid">
+        <a href="https://github.com/zainmirzaaa" target="_blank" class="connect-link">
+          <div class="connect-item">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+            <span>GitHub</span>
+          </div>
+        </a>
+        <a href="https://www.linkedin.com/in/zain-mirza-80540b2a2/" target="_blank" class="connect-link">
+          <div class="connect-item">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+            <span>LinkedIn</span>
+          </div>
+        </a>
+        <a href="mailto:zainnmirzaa@gmail.com" class="connect-link">
+          <div class="connect-item">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.9.732-1.636 1.636-1.636h.749L12 10.506l9.615-6.685h.749c.904 0 1.636.732 1.636 1.636z"/>
+            </svg>
+            <span>Email</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Music Page -->
+  <div class="page" id="music-page">
+    <div class="home-btn" onclick="showPage('home-page')">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+    </div>
+    <div class="page-content">
+      <div class="music-content">
+        <h1>🎵 Music</h1>
+        <h2>Coming Soon</h2>
+        <p>Music content will be added here.</p>
+      </div>
     </div>
   </div>
 
 <script>
   // Elements
   const startBtn = document.getElementById('startBtn');
-  const boxes = document.querySelectorAll('.box');
 
   // Start app
   startBtn.addEventListener('click', beginSite);
@@ -616,30 +552,19 @@
     if (audio && audio.src) audio.play().catch(() => {});
   }
 
-  // ----- EXPAND / COLLAPSE -----
-  // Click a box -> expand; click outside -> collapse
-  boxes.forEach(box => {
-    box.addEventListener('click', e => {
-      e.stopPropagation(); // keep document handler from firing
-
-      // Collapse any other expanded box
-      document.querySelectorAll('.box.expanded')
-        .forEach(b => b.classList.remove('expanded'));
-
-      // Expand this one & lock background scroll
-      box.classList.add('expanded');
-      document.body.classList.add('no-scroll');
+  // Page navigation
+  function showPage(pageId) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(page => {
+      page.classList.remove('active');
     });
-  });
-
-  document.addEventListener('click', e => {
-    // Click outside any .box -> collapse all expanded
-    if (!e.target.closest('.box')) {
-      document.querySelectorAll('.box.expanded')
-        .forEach(b => b.classList.remove('expanded'));
-      document.body.classList.remove('no-scroll');
-    }
-  });
+    
+    // Show selected page
+    document.getElementById(pageId).classList.add('active');
+    
+    // Reset scroll to top
+    document.getElementById(pageId).scrollTop = 0;
+  }
 
   // Live clock
   setInterval(() => {
