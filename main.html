@@ -7,7 +7,7 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body { background: white; font-family: Calibri, sans-serif; }
+    body { background: white; font-family: Calibri, sans-serif; overflow: hidden; }
 
     /* --- Pages --- */
     .page { 
@@ -31,21 +31,22 @@
 
     /* Home button */
     .home-btn {
-      position: fixed;
-      top: 2rem;
-      left: 2rem;
-      width: 50px;
-      height: 50px;
-      background: #f8f9fa;
-      border: 2px solid #e9ecef;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      z-index: 100;
-    }
+  position: fixed;
+  top: 5rem;   /* lowered from 2rem */
+  left: 2rem;
+  width: 50px;
+  height: 50px;
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 100;
+}
+
 
     .home-btn:hover {
       transform: scale(1.1);
@@ -75,7 +76,7 @@
       display: flex; 
       align-items: flex-start; 
       justify-content: center; 
-      overflow-y: auto;
+      overflow: hidden; 
       padding-top: 120px;
     }
 
@@ -522,20 +523,22 @@
   </div>
 
   <!-- Music Page -->
-  <div class="page" id="music-page">
-    <div class="home-btn" onclick="showPage('home-page')">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-      </svg>
-    </div>
-    <div class="page-content">
-      <div class="music-content">
-        <h1>🎵 Music</h1>
-        <h2>Coming Soon</h2>
-        <p>Music content will be added here.</p>
-      </div>
+<!-- Music Page -->
+<div class="page" id="music-page">
+  <div class="home-btn" onclick="showPage('home-page')">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+    </svg>
+  </div>
+  <div class="page-content">
+    <div class="music-content">
+      <h1>🎵 Music</h1>
+      <p>you say run → yuki hayashi</p>
+      <p>lady hear me tonight → modjo</p>
     </div>
   </div>
+</div>
+
 
 <script>
   // Elements
@@ -545,12 +548,16 @@
   startBtn.addEventListener('click', beginSite);
 
   function beginSite() {
-    document.getElementById('intro').classList.add('hidden');
-    document.getElementById('top-nav').classList.add('show');
+  document.getElementById('intro').classList.add('hidden');
+  document.getElementById('top-nav').classList.add('show');
 
-    const audio = document.getElementById('bgAudio');
-    if (audio && audio.src) audio.play().catch(() => {});
-  }
+  // Activate the home page once the intro is dismissed
+  document.getElementById('home-page').classList.add('active');
+
+  const audio = document.getElementById('bgAudio');
+  if (audio && audio.src) audio.play().catch(() => {});
+}
+
 
   // Page navigation
   function showPage(pageId) {
