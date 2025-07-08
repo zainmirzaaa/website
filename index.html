@@ -182,9 +182,32 @@
       background: #f8f9fa;
       border: 2px solid #e9ecef;
       border-radius: 12px;
-      padding: 2rem;
+      padding: 0;
       text-align: center;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .experience-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .experience-image {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      background: #e9ecef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: #666;
+    }
+
+    .experience-content {
+      padding: 1.5rem;
     }
 
     .experience-item h3 {
@@ -521,24 +544,36 @@
       <h1>💼 Experience</h1>
       <div class="experience-grid">
         <div class="experience-item">
-          <h3>Software Engineer Intern</h3>
-          <h4>BlackBerry</h4>
-          <p>Jan 2024 - Apr 2024</p>
+          <img src="images/blackberry-logo.jpg" alt="BlackBerry" class="experience-image" onerror="this.style.display='flex'; this.innerHTML='Company Logo';">
+          <div class="experience-content">
+            <h3>Software Engineer Intern</h3>
+            <h4>BlackBerry</h4>
+            <p>Jan 2024 - Apr 2024</p>
+          </div>
         </div>
         <div class="experience-item">
-          <h3>Teaching Assistant</h3>
-          <h4>UT Dallas</h4>
-          <p>Jan 2025 - May 2025</p>
+          <img src="images/utdallas-logo.jpg" alt="UT Dallas" class="experience-image" onerror="this.style.display='flex'; this.innerHTML='Company Logo';">
+          <div class="experience-content">
+            <h3>Teaching Assistant</h3>
+            <h4>UT Dallas</h4>
+            <p>Jan 2025 - May 2025</p>
+          </div>
         </div>
         <div class="experience-item">
-          <h3>Software Team Developer</h3>
-          <h4>AISC</h4>
-          <p>Mar 2024 - Jan 2025</p>
+          <img src="images/aisc-logo.jpg" alt="AISC" class="experience-image" onerror="this.style.display='flex'; this.innerHTML='Company Logo';">
+          <div class="experience-content">
+            <h3>Software Team Developer</h3>
+            <h4>AISC</h4>
+            <p>Mar 2024 - Jan 2025</p>
+          </div>
         </div>
         <div class="experience-item">
-          <h3>Backend Team Lead</h3>
-          <h4>ACM</h4>
-          <p>Sep 2023 - Dec 2023</p>
+          <img src="images/acm-logo.jpg" alt="ACM" class="experience-image" onerror="this.style.display='flex'; this.innerHTML='Company Logo';">
+          <div class="experience-content">
+            <h3>Backend Team Lead</h3>
+            <h4>ACM</h4>
+            <p>Sep 2023 - Dec 2023</p>
+          </div>
         </div>
       </div>
     </div>
@@ -555,7 +590,7 @@
       <h1>🍎 Projects</h1>
       <div class="projects-grid">
         <div class="project-item">
-          <img src="images/IMG_9809.JPG" alt="AI Discord Agent" class="project-image" onerror="this.style.display='flex'; this.innerHTML='Project Image';">
+          <img src="images/discord-ai-project.jpg" alt="AI Discord Agent" class="project-image" onerror="this.style.display='flex'; this.innerHTML='Project Image';">
           <div class="project-content">
             <h3>AI Agent for Discord</h3>
             <div class="project-about">
@@ -574,7 +609,7 @@
           </div>
         </div>
         <div class="project-item">
-          <img src="images/IMG_9810.PNG" alt="Stack Overflow LLM" class="project-image" onerror="this.style.display='flex'; this.innerHTML='Project Image';">
+          <img src="images/stackoverflow-llm-project.jpg" alt="Stack Overflow LLM" class="project-image" onerror="this.style.display='flex'; this.innerHTML='Project Image';">
           <div class="project-content">
             <h3>Link LLM for Stack Overflow</h3>
             <div class="project-about">
@@ -593,7 +628,7 @@
           </div>
         </div>
         <div class="project-item">
-          <img src="images/IMG_9811.JPG" alt="TrashTrends" class="project-image" onerror="this.style.display='flex'; this.innerHTML='Project Image';">
+          <img src="images/trashtrends-project.jpg" alt="TrashTrends" class="project-image" onerror="this.style.display='flex'; this.innerHTML='Project Image';">
           <div class="project-content">
             <h3>TrashTrends - AI Student Collective</h3>
             <div class="project-about">
@@ -612,7 +647,7 @@
           </div>
         </div>
         <div class="project-item">
-          <img src="images/IMG_6670.JPG" alt="GuardianGram" class="project-image" onerror="this.style.display='flex'; this.innerHTML='Project Image';">
+          <img src="images/guardiangram-project.jpg" alt="GuardianGram" class="project-image" onerror="this.style.display='flex'; this.innerHTML='Project Image';">
           <div class="project-content">
             <h3>GuardianGram - ACM</h3>
             <div class="project-about">
